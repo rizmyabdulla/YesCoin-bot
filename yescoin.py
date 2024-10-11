@@ -20,6 +20,7 @@ def print_welcome_message():
     print(Fore.GREEN + Style.BRIGHT + "YesCoin BOT (ULTIMATE EDITION)")
     print(Fore.GREEN + Style.BRIGHT + "Created by: TG @NotMrStrange")
     print(Fore.GREEN + Style.BRIGHT + "Youtube channel: https://www.youtube.com/@Yk-Daem%C3%B8n")
+    print(Fore.GREEN + Style.BRIGHT + "Telegram channel: https://t.me/YkDaemon")
 # Load tokens from file
 def load_tokens(file_path):
     with open(file_path, 'r') as file:
