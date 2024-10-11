@@ -19,6 +19,7 @@ def print_welcome_message():
           """)
     print(Fore.GREEN + Style.BRIGHT + "YesCoin BOT (ULTIMATE EDITION)")
     print(Fore.GREEN + Style.BRIGHT + "Created by: TG @NotMrStrange")
+    print(Fore.GREEN + Style.BRIGHT + "Youtube channel: https://www.youtube.com/@Yk-Daem%C3%B8n")
 # Load tokens from file
 def load_tokens(file_path):
     with open(file_path, 'r') as file:
@@ -346,7 +347,6 @@ def check_mission(token, mission_id):
             print(f"{Fore.GREEN + Style.BRIGHT}\r[ Daily Mission ] : Checking Mission {mission_id}...", flush=True)
             return True
         elif result['message'] == 'secret code get lock failed':
-            print(result)
             print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Daily Mission ] : Requesting again for {mission_id}...", flush=True)
             time.sleep(5)
         else:
