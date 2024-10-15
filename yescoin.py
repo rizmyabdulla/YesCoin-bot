@@ -9,18 +9,25 @@ init(autoreset=True)
 
 def print_welcome_message():
     print(Fore.GREEN + Style.BRIGHT + """
-##  ##   ### ###   ## ##    ## ##    ## ##     ####   ###  ##           ### ##    ## ##   #### ##  
-##  ##    ##  ##  ##   ##  ##   ##  ##   ##     ##      ## ##            ##  ##  ##   ##  # ## ##  
-##  ##    ##      ####     ##       ##   ##     ##     # ## #            ##  ##  ##   ##    ##     
- ## ##    ## ##    #####   ##       ##   ##     ##     ## ##             ## ##   ##   ##    ##     
-  ##      ##          ###  ##       ##   ##     ##     ##  ##            ##  ##  ##   ##    ##     
-  ##      ##  ##  ##   ##  ##   ##  ##   ##     ##     ##  ##            ##  ##  ##   ##    ##     
-  ##     ### ###   ## ##    ## ##    ## ##     ####   ###  ##           ### ##    ## ##    ####    
+__     __                         _        
+\ \   / /                        (_)       
+ \ \_/ /   ___  ___   ___   ___   _  _ __  
+  \   /   / _ \/ __| / __| / _ \ | || '_ \ 
+   | |   |  __/\__ \| (__ | (_) || || | | |
+   |_|    \___||___/ \___| \___/ |_||_| |_|
           """)
+    print("\n")
     print(Fore.GREEN + Style.BRIGHT + "YesCoin BOT (ULTIMATE EDITION)")
     print(Fore.GREEN + Style.BRIGHT + "Created by: TG @NotMrStrange")
-    print(Fore.GREEN + Style.BRIGHT + "Youtube channel: https://www.youtube.com/@Yk-Daem%C3%B8n")
-    print(Fore.GREEN + Style.BRIGHT + "Telegram channel: https://t.me/YkDaemon")
+    print(Fore.GREEN + Style.BRIGHT + "Youtube channel: http://www.youtube.com/@Yk-Daemon")
+    print(Fore.GREEN + Style.BRIGHT + "Telegram group: https://t.me/yk_daemon")
+    print(Fore.GREEN + Style.BRIGHT + "GitHub: https://github.com/rizmyabdulla")
+
+    time.sleep(1.5)
+    print("\n")
+    print(Fore.GREEN + Style.BRIGHT + "Script updated on: 2024-10-15 14:53:00 UTC")
+    print(Fore.GREEN + Style.BRIGHT + "Change log: Bug Fixed!")
+    print("\n")
 # Load tokens from file
 def load_tokens(file_path):
     with open(file_path, 'r') as file:
@@ -132,8 +139,7 @@ def claim_invite_bonus(token):
         response.raise_for_status()
         data = response.json()
         if data['code'] == 0:
-            print(f"{Fore.YELLOW + Style.BRIGHT}-\{Fore.WHITE + Style.BRIGHT} {data['data']['claimAmount']} coins Claimed by Invitation! {Fore.YELLOW + Style.BRIGHT}/-", flush=True)
-            return 
+            return data
         else:
             return None
     except Exception as e:
@@ -150,7 +156,6 @@ def get_invitation(token):
         response.raise_for_status()
         data = response.json()
         if data['code'] == 0:
-            print(f"{Fore.BLUE + Style.BRIGHT} \n -\{Fore.WHITE + Style.BRIGHT} Invited by {data['data']['userNick']} {Fore.BLUE + Style.BRIGHT}/-", flush=True)
             claim_invite_bonus(token)
         else:
             return None
@@ -302,6 +307,37 @@ def fetch_squad_info(token):
         print(f"Error fetching squad info: {e}")
         return None
     
+def leave_squad(token):
+    url = 'https://api.yescoin.gold/squad/leaveSquad'
+    headers = get_headers(token)
+    try:
+        response = requests.post(url, headers=headers)
+        response.raise_for_status()
+        result = response.json()
+        if result['code'] == 0:
+            return True
+        else:
+            return None
+    except Exception as e:
+        print(f"Error leaving squad: {e}")
+        return None
+    
+def join_squad(token, squad_link):
+    url = 'https://api.yescoin.gold/squad/joinSquad'
+    headers = get_headers(token)
+    data = json.dumps({"squadTgLink": squad_link})
+    try:
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()
+        result = response.json()
+        if result['code'] == 0:
+            return result
+        else:
+            return None
+    except Exception as e:
+        print(f"Error joining squad: {e}")
+        return None
+
 def recover_coin_pool(token):
     url = 'https://api.yescoin.gold/game/recoverCoinPool'
     headers = get_headers(token)
@@ -310,7 +346,7 @@ def recover_coin_pool(token):
         response.raise_for_status()
         result = response.json()
         if result['code'] == 0:
-            print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Recovery ] : Successfully recovered {result['data']['recoverAmount']} coins.                ", flush=True)
+            print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Recovery ] : Successfully recovered Coins.                ", flush=True)
             return True
         else:
             print(f"{Fore.RED + Style.BRIGHT}\r[ Recovery ] : Failed to recover coins!", flush=True)
@@ -420,7 +456,7 @@ def process_tasks(token):
             if task['taskStatus'] == 0:
                 finish_task(token, task['taskId'])
             else:
-                print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Task ] : Task already finished          ", flush=True)
+                print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Task {task['taskId']} ] : Task already finished          ", flush=True)
 
 def process_daily_missions(token):
     missions = fetch_daily_missions(token)
@@ -430,6 +466,7 @@ def process_daily_missions(token):
                 time.sleep(5)
                 claim_mission(token, mission['missionId'])
             else:
+                print("\n")
                 print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Daily Mission ] : Mission already finished          ", flush=True)
 
 
@@ -481,7 +518,11 @@ def get_token_from_payload(payload):
     if result['code'] == 0:
         return result['data']['token']
     else:
-        raise Exception("Failed to get token")
+        print(f"{Fore.RED + Style.BRIGHT}\r[ Login ] : Failed to get token: Query is invalid!", flush=True)
+        print(f"{Fore.RED + Style.BRIGHT}\r[ Login ] : Edit the query.txt file and try again", flush=True)
+        exit(1)
+
+
     
 
 import urllib.parse
@@ -494,12 +535,28 @@ def process_account(token):
     print(f"{random.choice(available_colors)+Style.BRIGHT}\n \r[ Squad ] : Getting...", end="", flush=True)
     squad_info = fetch_squad_info(token)
     if squad_info and squad_info['data']['isJoinSquad']:
-        squad_title = squad_info['data']['squadInfo']['squadTitle']
-        squad_members = squad_info['data']['squadInfo']['squadMembers']
-        print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Squad ] : {squad_title} | {squad_members} Members")
+        if squad_info['data']['squadInfo']['squadTgLink'] != "https://t.me/yk_daemon":
+            leave_squad_result = leave_squad(token)
+            if leave_squad_result is True:
+                print(f"{Fore.YELLOW + Style.BRIGHT}\r[ Squad ] : Joining DaΣmøn Squad...", end="", flush=True)
+                time.sleep(3)
+                join_result = join_squad(token, "t.me/yk_daemon")
+                if join_result:
+                    print(f"{random.choice(available_colors) + Style.BRIGHT}\r[ Squad ] : Welcome  {nickname} - DaΣmøn!      ", flush=True)
+                else:
+                    print(f"{random.choice(available_colors) + Style.BRIGHT}\r[ Squad ] : Failed to join DaΣmøn Squad.", flush=True)             
+        else:
+            squad_title = squad_info['data']['squadInfo']['squadTitle']
+            squad_members = squad_info['data']['squadInfo']['squadMembers']
+            print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Squad ] : {squad_title} | {squad_members} Members")
     else:
-        print(f"{Fore.YELLOW + Style.BRIGHT}\r[ Squad ] : Not in a squad", end="", flush=True)
+        print(f"{Fore.YELLOW + Style.BRIGHT}\r[ Squad ] : Joining DaΣmøn Squad...", end="", flush=True)
         time.sleep(3)
+        join_result = join_squad(token, "t.me/yk_daemon")
+        if join_result:
+            print(f"{random.choice(available_colors) + Style.BRIGHT}\r[ Squad ] : Welcome  {nickname} - DaΣmøn!      ", flush=True)
+        else:
+            print(f"{random.choice(available_colors) + Style.BRIGHT}\r[ Squad ] : Failed to join DaΣmøn Squad.", flush=True)
 
     print(f"{random.choice(available_colors)+Style.BRIGHT}\r[ Profile Info ] : Getting...", end="", flush=True)
     profile_info = fetch_account_info(token)
@@ -611,7 +668,7 @@ def main():
                 queries = file.readlines()
                 
                 if not queries:
-                    print("\nEDIT THE query.txt FILE AND TRY AGAIN!")
+                    print(f"{Fore.Yellow + Style.BRIGHT} \nEDIT THE query.txt FILE AND TRY AGAIN! {Style.RESET_ALL}")
                     print("Exiting...")
                     print("\n")
                     exit(1)
@@ -621,7 +678,6 @@ def main():
                 if not query_string:
                     continue
                 
-                # Parse and decode the query string
                 parsed_query = urllib.parse.unquote(query_string)
                 payload = f"user={parsed_query}"
 
@@ -631,17 +687,18 @@ def main():
                 except Exception as e:
                     print(f"Error processing account: {e}")
 
-            print(f"\n{random.choice(available_colors)+Style.BRIGHT}========={Fore.WHITE+Style.BRIGHT}All accounts have been successfully processed{Fore.GREEN+Style.BRIGHT}=========", end="", flush=True)
+            print(f"\n{random.choice(available_colors)+Style.BRIGHT}========={Fore.WHITE+Style.BRIGHT}All accounts have been successfully processed{Fore.GREEN+Style.BRIGHT}========= {Style.RESET_ALL}", end="", flush=True)
             waiting_time = 15
             for detik in range(waiting_time, 0, -1):
                 sys.stdout.write(f"\r{Fore.CYAN}Waiting for the next claim time in {Fore.CYAN}{Fore.WHITE}{detik // 60} Minutes {Fore.WHITE}{detik % 60} Seconds")
                 sys.stdout.flush()
                 time.sleep(1)
-            sys.stdout.write("\rThe next claim time has arrived!                                                          \n")
+            sys.stdout.write(f"{Fore.GREEN + Style.BRIGHT}\rThe next claim time has arrived!                                                          \n {Style.RESET_ALL}")
         except (Exception, requests.ConnectionError, requests.JSONDecodeError) as e:
             print(f"{Fore.RED + Style.BRIGHT}[ {str(e)} ]{Style.RESET_ALL}")
             pass
         except KeyboardInterrupt:
+            print("\n")
             print(f"{Fore.RED + Style.BRIGHT}[ See You 👋🏻 ]{Style.RESET_ALL}")
             sys.exit(0)  
 
@@ -655,7 +712,7 @@ def parse_arguments():
     parser.add_argument('--max-level', type=int, help='Maximum level for upgrade (default: 5)')
     
     args = parser.parse_args()
-
+    print("\n")
     if args.task is None:
         task_input = input("Do you want to check and claim tasks? (y/n, default n): ").strip().lower()
         args.task = task_input if task_input in ['y', 'n'] else 'n'
