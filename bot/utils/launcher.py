@@ -17,7 +17,7 @@ import json
 
 start_text = """
 
-Yescoin (paid version) by TheVeil (tg: @NotMrStrange)
+Yescoin (Free version) by TheVeil (tg: @NotMrStrange)
 
 Select an action:
 
